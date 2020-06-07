@@ -37,3 +37,10 @@ class Url(models.Model):
     def __str__(self):
         return "%s -- %s" % (self.long_url, self.short_id)
 
+class Export(models.Model):
+    name=models.CharField(max_length=150, verbose_name='Nombre', unique=False)
+    phone=models.IntegerField(unique=False)
+    short_id = models.SlugField()
+
+    def __str__(self):
+        return self.name

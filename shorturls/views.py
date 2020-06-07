@@ -1,21 +1,21 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
-from .models import Url,File
+from .models import Url,File,Export
 import hashlib
 from django.views.generic.base import View,TemplateView
 from .forms import FileForm
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse,HttpResponseRedirect
 import csv
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+
 from django.core import serializers
 
-
 # Create your views here.
-def UrlCreate(long_url, fileformid):
+def UrlCreate(long_url, fileformid,phone):
     if Url.objects.filter(
             long_url=long_url
     ).exists():  # If a shortened URL already exists, don't make a duplicate.
@@ -34,6 +34,8 @@ def UrlCreate(long_url, fileformid):
 
     url = Url(short_id=hashed[:length], long_url=long_url, fileid=File.objects.get(id=fileformid))
     url.save()
+    phone=Export(phone=phone,short_id=hashed[:length],name=File.objects.get(id=fileformid).file)
+    phone.save()
 
     pass
 
@@ -141,7 +143,8 @@ class FileUpdateView(UpdateView):
                 with open('media/'+str(path), 'r+') as csv_file:
                     csv_reader = csv.DictReader(csv_file)
                     for row in csv_reader:
-                        UrlCreate(row['long_url'],fileformid)
+                        UrlCreate(row['long_url'],fileformid,row['phone'])
+
 
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
@@ -185,10 +188,9 @@ class FileDeleteView(DeleteView):
         context['list_url'] = self.success_url
         return context
 
+
 class InvalidoView(TemplateView):
     template_name = 'invalido.html'
-
-
 
 
 class DashboardView(TemplateView):
@@ -199,3 +201,16 @@ class DashboardView(TemplateView):
         context['panel'] = 'Panel de administrador'
         return context
 
+
+class Exportview(View):
+
+   def get(self, request,pk):
+     response = HttpResponse(content_type='text/csv')
+     response['Content-Disposition'] = 'attachment; filename="members.csv"'
+     writer = csv.writer(response)
+     writer.writerow(['phone', 'short_id','namefile'])
+     filepath=File.objects.get(id=pk).file
+     namepath=Export.objects.filter(name=filepath)
+     for i in namepath:
+         writer.writerow([i.phone,i.short_id,i.name])
+     return response

@@ -60,8 +60,9 @@ $(function () {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    var buttons = '<a href="/procesar/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-cogs"></i></a> ';
-                    buttons += '<a href="delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a>';
+                    var buttons = '<a href="/procesar/' + row.id + '/" type="button" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-cogs">  Procesar</i></a> ';
+                    buttons += '<a href="export/' + row.id + '/" type="button" class="btn btn-info btn-xs btn-flat"><i class="fas fa-cloud-download-alt">  Descargar</i></a>';
+                    buttons += '<a href="delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt">  Eliminar</i></a>';
                     return buttons;
                 }
             },

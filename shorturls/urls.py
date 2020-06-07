@@ -1,7 +1,7 @@
 from django.urls import path
 
 from django.forms import *
-from .views import RedirectView,InvalidoView,FileCreateView,FileListView,FileUpdateView,DashboardView,FileDeleteView
+from .views import RedirectView,InvalidoView,FileCreateView,FileListView,FileUpdateView,DashboardView,FileDeleteView,Exportview
 
 
 app_name = "shorturls"
@@ -16,5 +16,7 @@ urlpatterns = [
                path("procesar/<int:pk>/", FileUpdateView.as_view(), name="procesar"),
                path("delete/<int:pk>/", FileDeleteView.as_view(), name="procesar"),
                path('dashboard', DashboardView.as_view(), name='dashboard'),
+               path("export/<int:pk>/", Exportview.as_view(), name="exportar"),
 
                ]
+
